@@ -1,5 +1,6 @@
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, Data
+import re
 
 
 class MANETDataset(InMemoryDataset):
@@ -19,6 +20,25 @@ class MANETDataset(InMemoryDataset):
         # Download to `self.raw_dir`.
         pass
 
+    def getEdgeIndex(self):
+        edge_indices = []
+        with open('data/p2p-Gnutella05.txt') as file:
+            for line in file:
+                #print(line)
+                tmp = []
+                tmp.append([int(s) for s in re.split('\t|\n',line) if s.isdigit()])
+                print(tmp)
+                edge_indices.append(tmp)
+        print(len(edge_indices))
+        int_edge_indices = []
+        for element in edge_indices:
+            #print(element)
+            int_edge_indices.append(int(element))
+        edge_indices = torch.tensor(int_edge_indices)
+        edge_indices = edge_indices.t().to(torch.long).view(2, -1)
+        return edge_indices
+
+
     def process(self):
         # Read data into huge `Data` list.
         data_list = []
@@ -29,7 +49,7 @@ class MANETDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        edge_index = getEdgeIndex()
+        edge_index = self.getEdgeIndex()
 
         #data, slices = self.collate(data_list)
         data = Data(edge_index=edge_index)
@@ -39,11 +59,6 @@ class MANETDataset(InMemoryDataset):
         #torch.save((data, slices), self.processed_paths[0])
         torch.save(data,
                    os.path.join(self.processed.dir,'data.pt'))
-
-    def getEdgeIndex():
-        edge_feats = []
-        for item in row.split(' ')
-            edge_feats.append(item)
 
 
 dataset = MANETDataset(root="data/")
