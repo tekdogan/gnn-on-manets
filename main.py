@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, Data
 import re
-
+import numpy
 
 class MANETDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
@@ -21,15 +21,16 @@ class MANETDataset(InMemoryDataset):
         pass
 
     def getEdgeIndex(self):
-        edge_indices = []
+        edge_indices = [[]]
         with open('data/p2p-Gnutella05.txt') as file:
             for line in file:
                 #print(line)
                 tmp = []
-                tmp.append([int(s) for s in re.split('\t|\n',line) if s.isdigit()])
+                tmp.append([int(s) for s in re.split('\t|\n|\[\,|\]',line) if s.isdigit()])
                 print(tmp)
-                edge_indices.append(tmp)
-        print(len(edge_indices))
+                #edge_indices.append(tmp)
+                edge_indices = numpy.append(edge_indices,tmp,axis=1)
+        print(len(edge_indices[0]))
         int_edge_indices = []
         for element in edge_indices:
             #print(element)
