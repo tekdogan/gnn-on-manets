@@ -2,6 +2,7 @@ import torch
 from torch_geometric.data import InMemoryDataset, download_url, Data
 import re
 import numpy
+import os
 
 class MANETDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
@@ -22,6 +23,7 @@ class MANETDataset(InMemoryDataset):
 
     def getEdgeIndex(self):
         edge_indices = [[]]
+        deneme = [[]]
         with open('data/p2p-Gnutella05.txt') as file:
             for line in file:
                 #print(line)
@@ -29,14 +31,21 @@ class MANETDataset(InMemoryDataset):
                 tmp.append([int(s) for s in re.split('\t|\n|\[\,|\]',line) if s.isdigit()])
                 print(tmp)
                 #edge_indices.append(tmp)
+                #row = []
+                #row.append(line)
                 edge_indices = numpy.append(edge_indices,tmp,axis=1)
-        print(len(edge_indices[0]))
+                #deneme.append(tmp[0][0],)
+        #print(len(edge_indices[0]))
+        #print(deneme)
         int_edge_indices = []
-        for element in edge_indices:
+        #for element in edge_indices:
             #print(element)
-            int_edge_indices.append(int(element))
-        edge_indices = torch.tensor(int_edge_indices)
+            #int_edge_indices.append(int(element))
+        #edge_indices = numpy.array(edge_indices).T
+        print(edge_indices)
+        edge_indices = torch.tensor(edge_indices)
         edge_indices = edge_indices.t().to(torch.long).view(2, -1)
+        print(edge_indices)
         return edge_indices
 
 
@@ -59,7 +68,7 @@ class MANETDataset(InMemoryDataset):
 
         #torch.save((data, slices), self.processed_paths[0])
         torch.save(data,
-                   os.path.join(self.processed.dir,'data.pt'))
+                   os.path.join(self.processed_dir,'data.pt'))
 
 
 dataset = MANETDataset(root="data/")
