@@ -7,7 +7,7 @@ import os
 class MANETDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
         super().__init__(root, transform, pre_transform, pre_filter)
-        #self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self):
@@ -68,12 +68,13 @@ class MANETDataset(InMemoryDataset):
 
         #data, slices = self.collate(data_list)
         data = Data(x=x, edge_index=edge_index)
-
+        self.data = data
 
 
         #torch.save((data, slices), self.processed_paths[0])
         torch.save(data,
                    os.path.join(self.processed_dir,'data.pt'))
+
 
 
 dataset = MANETDataset(root="data/")
@@ -82,4 +83,5 @@ data = dataset[0]
 for key, item in data:
     print(f'{key} found in data')
 
-#print(data.num_edges)
+print(data.num_nodes)
+print(data.num_edges)
