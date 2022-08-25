@@ -22,13 +22,14 @@ class MANETDataset(InMemoryDataset):
         pass
 
     def getEdgeIndex(self):
-        edge_indices = [[]]
+        edge_indices = [[],[]]
         deneme = [[]]
         with open('data/p2p-Gnutella05.txt') as file:
             for line in file:
                 #print(line)
                 tmp = []
                 tmp.append([int(s) for s in re.split('\t|\n|\[\,|\]',line) if s.isdigit()])
+                tmp = numpy.array(tmp).T.tolist()
                 print(tmp)
                 #edge_indices.append(tmp)
                 #row = []
@@ -43,8 +44,8 @@ class MANETDataset(InMemoryDataset):
             #int_edge_indices.append(int(element))
         #edge_indices = numpy.array(edge_indices).T
         print(edge_indices)
-        edge_indices = torch.tensor(edge_indices)
-        edge_indices = edge_indices.t().to(torch.long).view(2, -1)
+        edge_indices = torch.tensor(edge_indices).to(torch.long)
+        #edge_indices = edge_indices.t().to(torch.long).view(2, -1)
         print(edge_indices)
         return edge_indices
 
