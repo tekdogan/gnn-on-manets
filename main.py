@@ -46,8 +46,11 @@ class MANETDataset(InMemoryDataset):
         print(edge_indices)
         edge_indices = torch.tensor(edge_indices).to(torch.long)
         #edge_indices = edge_indices.t().to(torch.long).view(2, -1)
-        print(edge_indices)
+        print(edge_indices.shape)
         return edge_indices
+
+    def getNodes(self):
+        return torch.tensor(numpy.zeros(shape=(8844,1)))
 
 
     def process(self):
@@ -61,9 +64,10 @@ class MANETDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         edge_index = self.getEdgeIndex()
+        x = self.getNodes()
 
         #data, slices = self.collate(data_list)
-        data = Data(edge_index=edge_index)
+        data = Data(x=x, edge_index=edge_index)
 
 
 
@@ -73,3 +77,9 @@ class MANETDataset(InMemoryDataset):
 
 
 dataset = MANETDataset(root="data/")
+data = dataset[0]
+
+for key, item in data:
+    print(f'{key} found in data')
+
+#print(data.num_edges)
